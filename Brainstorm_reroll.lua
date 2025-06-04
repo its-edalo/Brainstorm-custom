@@ -71,61 +71,35 @@ function Brainstorm.auto_reroll()
 		if Brainstorm.SETTINGS.autoreroll.searchTag ~= "" then
 			_tag = pseudorandom_element(G.P_CENTER_POOLS["Tag"], Brainstorm.pseudoseed("Tag1" .. seed_found)).key
 			if _tag ~= Brainstorm.SETTINGS.autoreroll.searchTag then
-				seed_found = nil
+				_tag = pseudorandom_element(G.P_CENTER_POOLS["Tag"], Brainstorm.pseudoseed("Tag1" .. seed_found)).key
+				if _tag ~= Brainstorm.SETTINGS.autoreroll.searchTag then
+					seed_found = nil
+				end
 			end
 		end
 		if seed_found and Brainstorm.SETTINGS.autoreroll.searchForSoul then
 			-- Check if arcana pack from skip has The Soul
-			for i = 1, Brainstorm.SETTINGS.autoreroll.searchForSoul do
-				local soul_found = false
-				for i = 1, 5 do
-					if pseudorandom(Brainstorm.pseudoseed("soul_Tarot1" .. seed_found)) > 0.997 then
-						soul_found = true
+			local edition_poll = pseudorandom(Brainstorm.pseudoseed("edi" .. "sou" .. G.GAME.round_resets.ante .. seed_found))
+			if edition_poll <=  1 - 0.003 then
+				seed_found = nil
+			else
+				math.randomseed(Brainstorm.pseudoseed("Joker4" .. seed_found))
+				if math.random(5) ~= 5 then
+					seed_found = nil
+				else
+					local soul_found = false
+					for i = 1, 5 do
+						if pseudorandom(Brainstorm.pseudoseed("soul_Tarot1" .. seed_found)) > 0.997 then
+							soul_found = true
+						end
+					end
+					if not soul_found then
+						seed_found = nil
+						break
 					end
 				end
-				if not soul_found then
-					seed_found = nil
-					break
-				end
 			end
 		end
-		if seed_found and Brainstorm.SETTINGS.autoreroll.searchPack and #Brainstorm.SETTINGS.autoreroll.searchPack > 0 then
-		    local cume, it, center = 0, 0, nil
-			for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
-				if (not _type or _type == v.kind) then cume = cume + (v.weight or 1 ) end
-			end
-			local poll = pseudorandom(Brainstorm.pseudoseed("shop_pack1"..seed_found))*cume
-			for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
-				if not _type or _type == v.kind then it = it + (v.weight or 1) end
-				if it >= poll and it - (v.weight or 1) <= poll then center = v
-break end
-			end
-			local pack_found = false
-			for i = 1, #Brainstorm.SETTINGS.autoreroll.searchPack do
-				if Brainstorm.SETTINGS.autoreroll.searchPack[i] == center.key then
-					pack_found = true
-					break
-				end
-			end
-			if not pack_found then
-				seed_found = nil
-			end
-		end
-		--[[
-		Relevant vanilla pack code
-		    local cume, it, center = 0, 0, nil
-			for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
-				if (not _type or _type == v.kind) and not G.GAME.banned_keys[v.key] then cume = cume + (v.weight or 1 ) end
-			end
-			local poll = pseudorandom(pseudoseed((_key or 'pack_generic')..G.GAME.round_resets.ante))*cume
-			for k, v in ipairs(G.P_CENTER_POOLS['Booster']) do
-				if not G.GAME.banned_keys[v.key] then 
-					if not _type or _type == v.kind then it = it + (v.weight or 1) end
-					if it >= poll and it - (v.weight or 1) <= poll then center = v; break end
-				end
-			end
-			return center
-		]]
 	end
 	if seed_found then
 		_stake = G.GAME.stake

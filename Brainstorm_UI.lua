@@ -91,22 +91,6 @@ function create_tabs(args)
 							opt_callback = "change_search_tag",
 							current_option = Brainstorm.SETTINGS.autoreroll.searchTagID or 1,
 						}),
-						create_option_cycle({
-							label = "AutoReroll Search Pack",
-							scale = 0.8,
-							w = 4,
-							options = searchPackKeys,
-							opt_callback = "change_search_pack",
-							current_option = Brainstorm.SETTINGS.autoreroll.searchPackID or 1,
-						}),
-						create_option_cycle({
-							label = "Charm Tag/Arcana Pack: Number of Souls",
-							scale = 0.8,
-							w = 4,
-							options = {0,1,2},
-							opt_callback = "change_search_soul_count",
-							current_option = Brainstorm.SETTINGS.autoreroll.searchForSoul + 1 or 1,
-						}),
                         create_option_cycle({
 							label = "Rerolls per Frame",
 							scale = 0.8,
